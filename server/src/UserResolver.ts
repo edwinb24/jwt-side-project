@@ -4,9 +4,14 @@ import {User} from './entity/User'
 
 @Resolver()
 export class UserResolver {
+    @Query(()=> [User])
+    users() {
+        return User.find()
+    }
+
     @Query(()=> String)
     hello() {
-        return "hi"
+        return "hi!"
     }
 
     
