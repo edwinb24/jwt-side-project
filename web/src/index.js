@@ -6,6 +6,17 @@ import { Routes } from './Routes';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/graphql',
+  credentials: 'include',
+  request: operation => {
+    const accessToken = getAccessToken();
+    if(accessToken) {
+      operation.setContext({
+        headers: {
+          authorization:`bearer ${accessToken}`
+        }
+      })
+    }
+  }
 });
 
 ReactDOM.render(
