@@ -1,10 +1,10 @@
 import { ApolloProvider } from '@apollo/react-hooks';
-import { InMemoryCache } from "apollo-cache-inmemory";
-import { ApolloClient } from "apollo-client";
-import { ApolloLink, Observable } from "apollo-link";
-import { onError } from "apollo-link-error";
-import { HttpLink } from "apollo-link-http";
-import { TokenRefreshLink } from "apollo-link-token-refresh";
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloClient } from 'apollo-client';
+import { ApolloLink, Observable } from 'apollo-link';
+import { onError } from 'apollo-link-error';
+import { HttpLink } from 'apollo-link-http';
+import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -23,8 +23,8 @@ const requestLink = new ApolloLink(
           if (accessToken) {
             operation.setContext({
               headers: {
-                authorization: `bearer ${accessToken}`
-              }
+                authorization: `bearer ${accessToken}`,
+              },
             });
           }
         })
@@ -32,7 +32,7 @@ const requestLink = new ApolloLink(
           handle = forward(operation).subscribe({
             next: observer.next.bind(observer),
             error: observer.error.bind(observer),
-            complete: observer.complete.bind(observer)
+            complete: observer.complete.bind(observer),
           });
         })
         .catch(observer.error.bind(observer));
@@ -46,17 +46,15 @@ const requestLink = new ApolloLink(
 const client = new ApolloClient({
   link: ApolloLink.from([
     new TokenRefreshLink({
-      accessTokenField: "accessToken",
+      accessTokenField: 'accessToken',
       isTokenValidOrUndefined: () => {
-        const token = getAccessToken()
-        if(!token)
-        return true
+        const token = getAccessToken();
+        if (!token) return true;
         try {
-          const {exp} = jwtDecode(token)
-          if(Date.now() >= exp *1000) {
+          const { exp } = jwtDecode(token);
+          if (Date.now() >= exp * 1000) {
             return false;
-          } else 
-          return true;
+          } else return true;
         } catch {
           return false;
         }
@@ -72,22 +70,22 @@ const client = new ApolloClient({
       },
       handleError: err => {
         console.warn('Your refresh token is invalid. Try to relogin');
-        console.error(err)
-      }
+        console.error(err);
+      },
     }),
 
-    onError(({ graphQLErrors, networkError}) => {
-      console.log(graphQLErrors)
-      console.log(networkError)
+    onError(({ graphQLErrors, networkError }) => {
+      console.log(graphQLErrors);
+      console.log(networkError);
     }),
     requestLink,
     new HttpLink({
-      uri: "http://localhost:4000/graphql",
-      credentials: "include"
-    })
+      uri: 'http://localhost:4000/graphql',
+      credentials: 'include',
+    }),
   ]),
-  cache
-})
+  cache,
+});
 
 ReactDOM.render(
   <ApolloProvider client={client}>
