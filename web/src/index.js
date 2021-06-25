@@ -8,7 +8,7 @@ import { TokenRefreshLink } from "apollo-link-token-refresh";
 import jwtDecode from 'jwt-decode';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { getAccessToken } from './accessToken';
+import { getAccessToken, setAccessToken } from './accessToken';
 import { App } from './App';
 
 const cache = new InMemoryCache({});
@@ -72,13 +72,11 @@ const client = new ApolloClient({
       },
       handleError: err => {
         console.warn('Your refresh token is invalid. Try to relogin');
-        console.log("HERE11111")
         console.error(err)
       }
     }),
 
     onError(({ graphQLErrors, networkError}) => {
-      console.log("HERE222222")
       console.log(graphQLErrors)
       console.log(networkError)
     }),

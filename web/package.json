@@ -27,7 +27,10 @@
     "gen": "graphql-codegen --config codegen.yml"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
