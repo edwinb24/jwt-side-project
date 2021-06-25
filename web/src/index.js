@@ -46,37 +46,39 @@ const requestLink = new ApolloLink(
 const client = new ApolloClient({
   link: ApolloLink.from([
     new TokenRefreshLink({
-    accessTokenField: "accessToken",
-    isTokenValidOrUndefined: () => {
-      const token = getAccessToken()
-      if(!token)
-      return true
-      try {
-        const {exp} = jwtDecode(token)
-        if(Date.now() >= exp *1000) {
+      accessTokenField: "accessToken",
+      isTokenValidOrUndefined: () => {
+        const token = getAccessToken()
+        if(!token)
+        return true
+        try {
+          const {exp} = jwtDecode(token)
+          if(Date.now() >= exp *1000) {
+            return false;
+          } else 
+          return true;
+        } catch {
           return false;
-        } else 
-        return true;
-      } catch {
-        return false;
+        }
+      },
+      fetchAccessToken: () => {
+        return fetch('http://localhost:4000/refresh_token', {
+          credentials: 'include',
+          method: 'POST',
+        });
+      },
+      handleFetch: accessToken => {
+        setAccessToken(accessToken);
+      },
+      handleError: err => {
+        console.warn('Your refresh token is invalid. Try to relogin');
+        console.log("HERE11111")
+        console.error(err)
       }
-    },
-    fetchAccessToken: () => {
-      return fetch('http://localhost:4000/refresh_token', {
-        credentials: 'include',
-        method: 'POST',
-      });
-    },
-    handleFetch: accessToken => {
-      setAccessToken(accessToken);
-    },
-    handleError: err => {
-       console.warn('Your refresh token is invalid. Try to relogin');
-       console.error(err)
-    }
-  }),
+    }),
 
     onError(({ graphQLErrors, networkError}) => {
+      console.log("HERE222222")
       console.log(graphQLErrors)
       console.log(networkError)
     }),
